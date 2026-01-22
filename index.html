@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioFertilizer Pro v3.0 | Ultimate Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(20, 20, 30, 0.6);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        .premium-header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 1000; padding: 15px 0;
+        }
+        .header-content {
+            max-width: 1200px; margin: 0 auto; display: flex;
+            justify-content: space-between; align-items: center; padding: 0 20px;
+        }
+        .logo-section { display: flex; align-items: center; gap: 12px; }
+        .logo { font-size: 24px; animation: float 3s ease-in-out infinite; }
+        .brand-text { font-weight: 700; font-size: 1.4rem; letter-spacing: -0.5px; }
+        .brand-badge { 
+            font-size: 0.7rem; background: var(--success-gradient); 
+            padding: 2px 8px; border-radius: 10px; margin-left: 8px; 
+            color: #000; font-weight: 800; vertical-align: middle; 
+        }
+
+        /* --- LAYOUT --- */
+        .main-content { max-width: 1000px; margin: 40px auto; padding: 0 20px; padding-bottom: 100px; }
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin-bottom: 40px;
+        }
+        h1 { font-size: 2.2rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, #a5f3fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: var(--text-secondary); margin-bottom: 30px; font-size: 1rem; }
+
+        /* --- FORM --- */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .input-group { position: relative; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #a5f3fc; font-size: 0.9rem; }
+        input, select {
+            width: 100%; padding: 15px 20px; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            color: #fff; font-size: 1rem; transition: all 0.3s ease; outline: none;
+        }
+        input:focus, select:focus { border-color: #4facfe; background: rgba(0, 0, 0, 0.5); box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2); }
+        select option { background: #1e293b; color: #fff; }
+
+        /* Voice Button */
+        .voice-btn {
+            position: absolute; right: 10px; top: 38px;
+            background: transparent; border: none; color: #4facfe;
+            cursor: pointer; font-size: 1.2rem; opacity: 0.7; transition: 0.3s;
+        }
+        .voice-btn:hover { opacity: 1; transform: scale(1.1); }
+        .voice-active { color: #ff4b2b; animation: pulse 1s infinite; }
+
+        .button-group { margin-top: 30px; display: flex; gap: 15px; }
+        .btn {
+            flex: 1; padding: 16px; border: none; border-radius: 12px;
+            font-weight: 600; cursor: pointer; transition: transform 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem;
+        }
+        .btn-primary { background: var(--success-gradient); color: #0f172a; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--glass-border); }
+        .btn:hover { transform: translateY(-2px); }
+
+        /* --- REPORT UI --- */
+        .results-container { display: none; margin-top: 30px; animation: fadeIn 0.8s ease-out; }
+        .report-header {
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            padding-bottom: 30px; border-bottom: 1px solid var(--glass-border); margin-bottom: 30px;
+        }
+        .score-container { position: relative; width: 150px; height: 150px; margin: 20px 0; }
+        .circular-chart { display: block; margin: 0 auto; max-width: 100%; max-height: 100%; }
+        .circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 2.5; }
+        .circle { fill: none; stroke-width: 2.5; stroke-linecap: round; animation: progress 1.5s ease-out forwards; stroke: #4facfe; }
+        .percentage { fill: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.5em; text-anchor: middle; }
+        .score-label { font-size: 0.2em; fill: var(--text-secondary); text-anchor: middle; }
+        .status-pill { margin-top: 10px; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; }
+
+        /* Metrics */
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .metric-card { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; }
+        .metric-value { font-size: 1.3rem; font-weight: 700; margin: 5px 0; color: #fff; }
+        .mini-bar-bg { height: 4px; width: 100%; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
+        .mini-bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+        /* Actions */
+        .action-card {
+            display: flex; align-items: flex-start; gap: 15px; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; margin-bottom: 12px; position: relative; overflow: hidden;
+        }
+        .action-card.priority-high { border-left: 4px solid #ff9a9e; background: linear-gradient(90deg, rgba(255, 75, 75, 0.1) 0%, transparent 100%); }
+        .action-card.priority-medium { border-left: 4px solid #f6d365; }
+        .action-card.priority-good { border-left: 4px solid #4facfe; }
+        .ac-icon { background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .ac-content h4 { font-size: 0.95rem; margin-bottom: 4px; color: #fff; }
+        .ac-content p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Timeline */
+        .timeline-wrapper { border-top: 1px solid var(--glass-border); padding-top: 30px; margin-bottom: 30px; }
+        .timeline-steps { display: flex; justify-content: space-between; position: relative; }
+        .timeline-steps::before { content: ''; position: absolute; top: 18px; left: 20px; right: 20px; height: 2px; background: rgba(255,255,255,0.1); z-index: 0; }
+        .step { position: relative; z-index: 1; text-align: center; width: 25%; }
+        .step-circle { width: 36px; height: 36px; background: #1e293b; border: 2px solid #4facfe; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; box-shadow: 0 0 15px rgba(79, 172, 254, 0.3); }
+        .step h4 { font-size: 0.9rem; color: #a5f3fc; margin-bottom: 4px; }
+        .step p { font-size: 0.75rem; color: var(--text-secondary); }
+
+        /* Profit & Label */
+        .profit-section { border-top: 1px solid var(--glass-border); padding-top: 30px; margin-bottom: 30px; }
+        .profit-result-box { display: none; margin-top: 20px; background: linear-gradient(135deg, #11998e, #38ef7d); padding: 20px; border-radius: 15px; color: #fff; text-align: center; animation: fadeIn 0.5s ease-out; }
+        
+        .label-section { border-top: 1px solid var(--glass-border); padding-top: 30px; text-align: center; }
+        .label-card { background: #fff; color: #000; width: 350px; margin: 20px auto; padding: 20px; border-radius: 10px; border: 2px solid #4facfe; text-align: left; font-family: 'Arial', sans-serif; }
+        .label-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+        .label-brand { font-weight: 900; font-size: 1.2rem; text-transform: uppercase; color: #1a2a6c; }
+        .label-type { font-size: 0.8rem; background: #4facfe; color: #fff; padding: 2px 8px; border-radius: 4px; }
+        .label-details { font-size: 0.9rem; line-height: 1.6; color: #333; }
+        .label-footer { margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ccc; display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #666; }
+        .qr-box { width: 50px; height: 50px; background: #000; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.6rem; text-align: center; }
+
+        /* AgriBot Chat */
+        .bot-toggle { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--success-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; z-index: 2000; transition: transform 0.3s; animation: float 3s infinite; }
+        .bot-toggle:hover { transform: scale(1.1); }
+        .chat-window { position: fixed; bottom: 100px; right: 30px; width: 320px; height: 450px; background: rgba(20, 25, 40, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); z-index: 2000; animation: slideUp 0.3s ease-out; }
+        .chat-header { background: var(--primary-gradient); padding: 15px; color: #fff; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.9rem; }
+        .chat-message { margin-bottom: 10px; max-width: 80%; padding: 8px 12px; border-radius: 12px; line-height: 1.4; }
+        .bot-msg { background: rgba(255,255,255,0.1); color: #fff; border-bottom-left-radius: 2px; }
+        .user-msg { background: #4facfe; color: #000; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 2px; }
+        .chat-input-area { padding: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 5px; }
+        .chat-input { flex: 1; background: rgba(0,0,0,0.3); border: none; padding: 8px; border-radius: 8px; color: #fff; }
+        .send-btn { background: var(--success-gradient); border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; color: #000; font-weight: bold; }
+
+        /* Toast & Animations */
+        .toast { position: fixed; bottom: 30px; left: 30px; padding: 15px 25px; background: #fff; color: #333; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 2000; font-weight: 600; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes progress { 0% { stroke-dasharray: 0 100; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: 1fr; }
+            .timeline-steps { flex-direction: column; gap: 25px; }
+            .timeline-steps::before { width: 2px; height: 100%; left: 18px; top: 0; }
+            .step { width: 100%; text-align: left; padding-left: 50px; }
+            .step-circle { position: absolute; left: 0; top: 0; margin: 0; }
+        }
+        @media print {
+            body { background: white; color: black; }
+            .premium-header, .button-group, .toast, .bot-toggle, .chat-window, .voice-btn { display: none; }
+            .glass-panel { box-shadow: none; border: 1px solid #ccc; background: white; color: black; padding: 0; }
+            .results-container { display: block !important; }
+            .metric-card, .action-card, .label-card { background: #f5f5f5; border: 1px solid #ddd; color: black; }
+            h1, label, p, .metric-value, .ac-content h4, h3, h4 { color: black !important; background: none; -webkit-text-fill-color: black; }
+            .circle { stroke: black; } .timeline-steps::before { background: #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="premium-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">🌱</div>
+                <div class="brand-text">BioFertilizer Pro <span class="brand-badge">Ultimate</span></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="glass-panel">
+            <header>
+                <h1>Compost Analytics Engine</h1>
+                <p class="subtitle">AI-Powered analysis with Voice Control & Chat Assistant.</p>
+            </header>
+
+            <form id="bioForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Substrate Type</label>
+                        <select id="wasteType" required>
+                            <option value="Sugarcane Bagasse">Sugarcane Bagasse (High C)</option>
+                            <option value="Rice Husk">Rice Husk (High C)</option>
+                            <option value="Wheat Straw">Wheat Straw (High C)</option>
+                            <option value="Vegetable Waste">Vegetable Waste (High N)</option>
+                            <option value="Cow Manure">Cow Manure (Balanced N)</option>
+                        </select>
+                        <button type="button" class="voice-btn" onclick="startVoiceInput()" title="Click to Speak">🎙️</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Biomass Weight (kg)</label>
+                        <input type="number" id="pileSize" placeholder="e.g. 100" min="1" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Moisture Content (%)</label>
+                        <input type="number" id="moisture" placeholder="e.g. 45" min="0" max="100" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Current Temperature (°C)</label>
+                        <input type="number" id="temperature" placeholder="e.g. 28" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Bio-Inoculant</label>
+                        <select id="microbe" required>
+                            <option value="Azotobacter">Azotobacter (N-Fixing)</option>
+                            <option value="PSB">Phosphate Solubilizing Bacteria</option>
+                            <option value="Trichoderma">Trichoderma (Fungal)</option>
+                            <option value="EM Solution">EM Solution (Multi-strain)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary"><span>⚡ Run Analysis</span></button>
+                    <button type="button" class="btn btn-secondary" onclick="window.print()"><span>🖨️ Print Report</span></button>
+                </div>
+            </form>
+        </div>
+
+        <div id="results" class="results-container glass-panel">
+            <div class="report-header">
+                <div class="score-container">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path class="circle" id="scoreRing" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <text x="18" y="20.35" class="percentage" id="scoreText">0</text>
+                        <text x="18" y="25" class="score-label">SCORE</text>
+                    </svg>
+                </div>
+                <div id="statusPill" class="status-pill" style="background: rgba(255,255,255,0.1);">Analyzing...</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card"><div class="metric-icon">💧</div><div class="metric-title">Moisture</div><div class="metric-value" id="moistureDisplay">--%</div><div class="mini-bar-bg"><div id="moistureMiniBar" class="mini-bar-fill" style="width:0%"></div></div></div>
+                <div class="metric-card"><div class="metric-icon">🧬</div><div class="metric-title">C:N Ratio</div><div class="metric-value" id="cnDisplay">--:1</div><div class="mini-bar-bg"><div id="cnMiniBar" class="mini-bar-fill" style="width:0%"></div></div></div>
+                <div class="metric-card"><div class="metric-icon">🌡️</div><div class="metric-title">Temp Status</div><div class="metric-value" id="tempDisplay">--</div><div class="mini-bar-bg"><div id="tempMiniBar" class="mini-bar-fill" style="width:0%"></div></div></div>
+            </div>
+
+            <div class="recommendations-wrapper">
+                <div class="rec-header"><h3>📋 Optimization Steps</h3></div>
+                <div id="actionCardsContainer"></div>
+            </div>
+
+            <div class="timeline-wrapper">
+                <div class="timeline-header"><h3>📅 Estimated Process Timeline</h3></div>
+                <div class="timeline-steps" id="timelineContainer"></div>
+            </div>
+
+            <div class="profit-section">
+                <h3 style="color: #fff; margin-bottom: 20px;">💰 Profit Estimator (ROI)</h3>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1;"><label style="font-size: 0.8rem;">Total Cost (₹)</label><input type="number" id="inputCost" value="500" style="padding: 12px;"></div>
+                    <div style="flex: 1;"><label style="font-size: 0.8rem;">Selling Price / kg (₹)</label><input type="number" id="sellingPrice" value="40" style="padding: 12px;"></div>
+                    <div style="flex: 0 0 100px; display: flex; align-items: end;"><button onclick="calculateProfit()" class="btn btn-primary" style="height: 48px; padding: 0;">Calculate</button></div>
+                </div>
+                <div id="profitResult" class="profit-result-box">
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Estimated Net Profit</div>
+                    <div style="font-size: 2rem; font-weight: 800; margin: 5px 0;">₹<span id="netProfit">0</span></div>
+                    <div style="font-size: 0.8rem;">ROI: <span id="roiVal">0</span>%</div>
+                </div>
+            </div>
+
+            <div class="label-section">
+                <h3>🏷️ Smart Packaging Label</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Auto-generated batch sticker for final product.</p>
+                <div class="label-card" id="productLabel">
+                    <div class="label-header"><div class="label-brand">BioFertilizer Pro</div><div class="label-type">PREMIUM GRADE</div></div>
+                    <div class="label-details"><p><strong>Batch ID:</strong> <span id="lblBatch">---</span></p><p><strong>Input:</strong> <span id="lblInput">---</span></p><p><strong>Est. N-P-K:</strong> <span id="lblNPK">---</span></p></div>
+                    <div class="label-footer"><div>mfd by: BioFertilizer Pro AI<br>Net Wt: <span id="lblWt">--</span> kg</div><div class="qr-box">QR</div></div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="downloadLabel()">⬇️ Download Label</button>
+            </div>
+        </div>
+    </main>
+
+    <div class="bot-toggle" onclick="toggleChat()">🤖</div>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header"><span>AgriBot AI</span><span onclick="toggleChat()" style="cursor:pointer;">✖</span></div>
+        <div class="chat-body" id="chatBody"><div class="chat-message bot-msg">Hello! I'm AgriBot. Ask me anything about composting!</div></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question..." onkeypress="handleEnter(event)">
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Analysis Complete</div>
+
+    <script>
+        // Database
+        const wasteDatabase = {
+            "Sugarcane Bagasse": { cn: 150, type: "Carbon" },
+            "Rice Husk": { cn: 80, type: "Carbon" },
+            "Wheat Straw": { cn: 80, type: "Carbon" },
+            "Vegetable Waste": { cn: 15, type: "Nitrogen" },
+            "Cow Manure": { cn: 20, type: "Nitrogen" }
+        };
+
+        // Form Submit
+        document.getElementById('bioForm').addEventListener('submit', (e) => { e.preventDefault(); analyzeData(); });
+
+        // --- CORE ANALYSIS ---
+        function analyzeData() {
+            const wasteType = document.getElementById('wasteType').value;
+            const weight = parseFloat(document.getElementById('pileSize').value);
+            const moisture = parseFloat(document.getElementById('moisture').value);
+            const temp = parseFloat(document.getElementById('temperature').value);
+            const microbe = document.getElementById('microbe').value;
+            const wasteProps = wasteDatabase[wasteType];
+            
+            let score = 100;
+            let actions = [];
+            let scoreColor = "#4facfe";
+            let statusText = "Optimal";
+
+            // 1. C:N Logic
+            let estimatedCN = wasteProps.cn;
+            if (estimatedCN > 40) {
+                score -= 15;
+                actions.push({ priority: "high", icon: "⚖️", title: "High Carbon", desc: `Mix ${(weight * 0.3).toFixed(1)}kg of Cow Dung to balance.` });
+            } else if (estimatedCN < 20) {
+                score -= 10;
+                actions.push({ priority: "medium", icon: "👃", title: "Odor Risk", desc: `Add ${(weight * 0.2).toFixed(1)}kg of dry sawdust.` });
+            }
+
+            // 2. Moisture Logic
+            let moistureStatusColor = "#4facfe";
+            if (moisture < 40) {
+                score -= 20; moistureStatusColor = "#f6d365";
+                actions.push({ priority: "high", icon: "💧", title: "Too Dry", desc: `Add approx ${(weight * 0.15).toFixed(1)} Liters of water.` });
+            } else if (moisture > 65) {
+                score -= 20; moistureStatusColor = "#ff9a9e";
+                actions.push({ priority: "high", icon: "🌬️", title: "Too Wet", desc: `Turn pile immediately to aerate.` });
+            }
+
+            // 3. Temp Logic
+            let tempColor = "#4facfe";
+            if (temp < 15) { actions.push({ priority: "medium", icon: "❄️", title: "Cold", desc: `Cover with tarp to retain heat.` }); tempColor="#a5f3fc"; }
+            else if (temp > 65) { actions.push({ priority: "high", icon: "🔥", title: "Overheating", desc: `Turn pile to cool down.` }); tempColor="#ff9a9e"; }
+
+            // 4. General
+            actions.push({ priority: "good", icon: "🦠", title: "Inoculation", desc: `Apply ${microbe} at 10g/kg.` });
+
+            // UPDATE UI
+            if(score < 50) { scoreColor = "#ff9a9e"; statusText = "Critical"; }
+            else if(score < 80) { scoreColor = "#f6d365"; statusText = "Check"; }
+
+            const ring = document.getElementById('scoreRing');
+            ring.style.stroke = scoreColor; ring.style.strokeDasharray = `${score}, 100`;
+            document.getElementById('scoreText').textContent = score;
+            const pill = document.getElementById('statusPill');
+            pill.textContent = statusText; pill.style.background = scoreColor; pill.style.color = score < 80 ? "#000" : "#fff";
+
+            // Metrics
+            document.getElementById('moistureDisplay').textContent = moisture + "%";
+            document.getElementById('moistureMiniBar').style.width = Math.min(moisture, 100) + "%";
+            document.getElementById('moistureMiniBar').style.background = moistureStatusColor;
+            document.getElementById('cnDisplay').textContent = "~" + estimatedCN + ":1";
+            document.getElementById('cnMiniBar').style.width = Math.min(estimatedCN, 100) + "%";
+            document.getElementById('tempDisplay').textContent = temp + "°C";
+            document.getElementById('tempMiniBar').style.width = Math.min(temp, 100) + "%";
+            document.getElementById('tempMiniBar').style.background = tempColor;
+
+            // Actions
+            const container = document.getElementById('actionCardsContainer');
+            container.innerHTML = "";
+            actions.forEach(action => {
+                container.innerHTML += `<div class="action-card priority-${action.priority}"><div class="priority-tag">Alert</div><div class="ac-icon">${action.icon}</div><div class="ac-content"><h4>${action.title}</h4><p>${action.desc}</p></div></div>`;
+            });
+
+            // Timeline
+            let totalDays = (wasteType === "Sugarcane Bagasse" || wasteType === "Rice Husk") ? 45 : 30;
+            document.getElementById('timelineContainer').innerHTML = `
+                <div class="step"><div class="step-circle">1</div><h4>Day 1</h4><p>Mix</p></div>
+                <div class="step"><div class="step-circle">2</div><h4>Day ${Math.floor(totalDays*0.25)}</h4><p>Turn</p></div>
+                <div class="step"><div class="step-circle">3</div><h4>Day ${Math.floor(totalDays*0.5)}</h4><p>Check</p></div>
+                <div class="step"><div class="step-circle">4</div><h4>Day ${totalDays}</h4><p>Done</p></div>
+            `;
+
+            // Label
+            document.getElementById('lblBatch').textContent = "B-" + Math.floor(Math.random() * 10000);
+            document.getElementById('lblInput').textContent = wasteType;
+            document.getElementById('lblWt').textContent = (weight * 0.4).toFixed(1);
+            let npk = wasteType === "Cow Manure" ? "3:2:1" : "1.5:1:1";
+            document.getElementById('lblNPK').textContent = npk;
+
+            // Show
+            const resContainer = document.getElementById('results');
+            resContainer.style.display = "block";
+            resContainer.scrollIntoView({ behavior: 'smooth' });
+            showToast("Analysis Complete");
+        }
+
+        // --- PROFIT CALC ---
+        function calculateProfit() {
+            const weight = parseFloat(document.getElementById('pileSize').value);
+            const cost = parseFloat(document.getElementById('inputCost').value);
+            const price = parseFloat(document.getElementById('sellingPrice').value);
+            const profit = (weight * 0.4 * price) - cost;
+            const roi = cost > 0 ? (profit / cost) * 100 : 0;
+            
+            document.getElementById('netProfit').textContent = profit.toFixed(0);
+            document.getElementById('roiVal').textContent = roi.toFixed(1);
+            document.getElementById('profitResult').style.display = 'block';
+            document.getElementById('profitResult').style.background = profit >= 0 ? "linear-gradient(135deg, #11998e, #38ef7d)" : "linear-gradient(135deg, #ff416c, #ff4b2b)";
+        }
+
+        // --- AGRIBOT AI ---
+        function toggleChat() {
+            const chat = document.getElementById('chatWindow');
+            chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+        }
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if(!msg) return;
+            
+            const body = document.getElementById('chatBody');
+            body.innerHTML += `<div class="chat-message user-msg">${msg}</div>`;
+            input.value = "";
+            
+            // Simple Logic
+            setTimeout(() => {
+                let reply = "I can help optimize your compost.";
+                if(msg.toLowerCase().includes("smell")) reply = "Bad smell means high nitrogen. Add dry brown waste like sawdust.";
+                else if(msg.toLowerCase().includes("dry")) reply = "If it's dry, sprinkle water until it feels like a squeezed sponge.";
+                else if(msg.toLowerCase().includes("hot")) reply = "High heat is good! It kills pathogens. Turn the pile if >65°C.";
+                else if(msg.toLowerCase().includes("fly") || msg.includes("flies")) reply = "Cover the pile with a layer of soil or finished compost.";
+                
+                body.innerHTML += `<div class="chat-message bot-msg">${reply}</div>`;
+                body.scrollTop = body.scrollHeight;
+            }, 800);
+        }
+
+        // --- VOICE INPUT ---
+        function startVoiceInput() {
+            if (!('webkitSpeechRecognition' in window)) { alert("Voice input not supported in this browser."); return; }
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US';
+            const btn = document.querySelector('.voice-btn');
+            btn.classList.add('voice-active');
+            
+            recognition.onresult = function(event) {
+                const text = event.results[0][0].transcript.toLowerCase();
+                console.log("Voice:", text);
+                
+                // Keyword matching for Waste Type
+                if (text.includes("rice")) document.getElementById('wasteType').value = "Rice Husk";
+                else if (text.includes("wheat")) document.getElementById('wasteType').value = "Wheat Straw";
+                else if (text.includes("cow")) document.getElementById('wasteType').value = "Cow Manure";
+                else if (text.includes("vegetable")) document.getElementById('wasteType').value = "Vegetable Waste";
+                else if (text.includes("sugar")) document.getElementById('wasteType').value = "Sugarcane Bagasse";
+
+                // Number extraction logic (First number -> Weight, Second -> Moisture)
+                const numbers = text.match(/\d+/g);
+                if (numbers) {
+                    if (numbers[0]) document.getElementById('pileSize').value = numbers[0];
+                    if (numbers[1]) document.getElementById('moisture').value = numbers[1];
+                    if (numbers[2]) document.getElementById('temperature').value = numbers[2];
+                }
+                
+                showToast("Voice Input Processed: " + text);
+                btn.classList.remove('voice-active');
+            };
+            
+            recognition.onerror = function() { btn.classList.remove('voice-active'); };
+            recognition.onend = function() { btn.classList.remove('voice-active'); };
+            recognition.start();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg; toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        function downloadLabel() { alert("✨ Label Saved! (In real app: Downloads PNG)"); }
+    </script>
+</body>
+</html>
